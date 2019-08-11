@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,25 @@
  *
  */
 
-#include "../Marlin.h"
+#include "../inc/MarlinConfigPre.h"
 
 #if ENABLED(BACKLASH_COMPENSATION)
 
 #include "backlash.h"
+
+#include "../module/motion.h"
 #include "../module/planner.h"
+
+#ifdef BACKLASH_DISTANCE_MM
+  #if ENABLED(BACKLASH_GCODE)
+    float Backlash::distance_mm[XYZ] = BACKLASH_DISTANCE_MM;
+  #else
+    const float Backlash::distance_mm[XYZ] = BACKLASH_DISTANCE_MM;
+  #endif
+#endif
 
 #if ENABLED(BACKLASH_GCODE)
   uint8_t Backlash::correction = (BACKLASH_CORRECTION) * 0xFF;
-  #ifdef BACKLASH_DISTANCE_MM
-    float Backlash::distance_mm[XYZ] = BACKLASH_DISTANCE_MM;
-  #endif
   #ifdef BACKLASH_SMOOTHING_MM
     float Backlash::smoothing_mm = BACKLASH_SMOOTHING_MM;
   #endif
@@ -75,10 +82,10 @@ void Backlash::add_correction_steps(const int32_t &da, const int32_t &db, const 
     // to segments where there is no direction change.
     static int32_t residual_error[XYZ] = { 0 };
   #else
-    // No leftover residual error from segment to segment
-    int32_t residual_error[XYZ] = { 0 };
     // No direction change, no correction.
     if (!changed_dir) return;
+    // No leftover residual error from segment to segment
+    int32_t residual_error[XYZ] = { 0 };
   #endif
 
   const float f_corr = float(correction) / 255.0f;
@@ -99,8 +106,8 @@ void Backlash::add_correction_steps(const int32_t &da, const int32_t &db, const 
           // the current segment travels in the same direction as the correction
           if (reversing == (error_correction < 0)) {
             if (segment_proportion == 0)
-              segment_proportion = MIN(1.0f, block->millimeters / smoothing_mm);
-            error_correction = ceil(segment_proportion * error_correction);
+              segment_proportion = _MIN(1.0f, block->millimeters / smoothing_mm);
+            error_correction = CEIL(segment_proportion * error_correction);
           }
           else
             error_correction = 0; // Don't take up any backlash in this segment, as it would subtract steps

@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "../module/printcounter.h"
 #include "../core/language.h"
 #include "../gcode/queue.h"
+#include "../module/configuration_store.h"
 
 #if ENABLED(EMERGENCY_PARSER)
   #include "../feature/emergency_parser.h"
@@ -81,10 +82,10 @@ uint8_t CardReader::workDirDepth;
         char **CardReader::sortshort, **CardReader::sortnames;
       #else
         char CardReader::sortshort[SDSORT_LIMIT][FILENAME_LENGTH];
-        char CardReader::sortnames[SDSORT_LIMIT][SORTED_LONGNAME_MAXLEN];
+        char CardReader::sortnames[SDSORT_LIMIT][SORTED_LONGNAME_STORAGE];
       #endif
     #elif DISABLED(SDSORT_USES_STACK)
-      char CardReader::sortnames[SDSORT_LIMIT][SORTED_LONGNAME_MAXLEN];
+      char CardReader::sortnames[SDSORT_LIMIT][SORTED_LONGNAME_STORAGE];
     #endif
 
     #if HAS_FOLDER_SORTING
@@ -132,9 +133,8 @@ CardReader::CardReader() {
   // Disable autostart until card is initialized
   autostart_index = -1;
 
-  //power to SD reader
-  #if SDPOWER > -1
-    OUT_WRITE(SDPOWER, HIGH);
+  #if PIN_EXISTS(SDPOWER)
+    OUT_WRITE(SDPOWER_PIN, HIGH); // Power the SD reader
   #endif
 }
 
@@ -352,6 +352,9 @@ void CardReader::initsd() {
   else {
     flag.detected = true;
     SERIAL_ECHO_MSG(MSG_SD_CARD_OK);
+    #if ENABLED(EEPROM_SETTINGS) && NONE(FLASH_EEPROM_EMULATION, SPI_EEPROM, I2C_EEPROM)
+      settings.first_load();
+    #endif
   }
   setroot();
 
@@ -367,8 +370,8 @@ void CardReader::openAndPrintFile(const char *name) {
   char cmd[4 + strlen(name) + 1]; // Room for "M23 ", filename, and null
   sprintf_P(cmd, PSTR("M23 %s"), name);
   for (char *c = &cmd[4]; *c; c++) *c = tolower(*c);
-  enqueue_and_echo_command_now(cmd);
-  enqueue_and_echo_commands_P(PSTR("M24"));
+  queue.enqueue_one_now(cmd);
+  queue.enqueue_now_P(PSTR("M24"));
 }
 
 void CardReader::startFileprint() {
@@ -556,6 +559,9 @@ void CardReader::checkautostart() {
   if (autostart_index < 0 || flag.sdprinting) return;
 
   if (!isDetected()) initsd();
+  #if ENABLED(EEPROM_SETTINGS) && NONE(FLASH_EEPROM_EMULATION, SPI_EEPROM, I2C_EEPROM)
+    else settings.first_load();
+  #endif
 
   if (isDetected()
     #if ENABLED(POWER_LOSS_RECOVERY)
@@ -760,11 +766,13 @@ void CardReader::setroot() {
       #endif
     #else
       // Copy filenames into the static array
-      #if SORTED_LONGNAME_MAXLEN != LONG_FILENAME_LENGTH
-        #define SET_SORTNAME(I) do{ strncpy(sortnames[I], longest_filename(), SORTED_LONGNAME_MAXLEN); \
-                                    sortnames[I][SORTED_LONGNAME_MAXLEN] = '\0'; }while(0)
+      #define _SET_SORTNAME(I) strncpy(sortnames[I], longest_filename(), SORTED_LONGNAME_MAXLEN)
+      #if SORTED_LONGNAME_MAXLEN == LONG_FILENAME_LENGTH
+        // Short name sorting always use LONG_FILENAME_LENGTH with no trailing nul
+        #define SET_SORTNAME(I) _SET_SORTNAME(I)
       #else
-        #define SET_SORTNAME(I) strncpy(sortnames[I], longest_filename(), SORTED_LONGNAME_MAXLEN)
+        // Copy multiple name blocks. Add a nul for the longest case.
+        #define SET_SORTNAME(I) do{ _SET_SORTNAME(I); sortnames[I][SORTED_LONGNAME_MAXLEN] = '\0'; }while(0)
       #endif
       #if ENABLED(SDSORT_CACHE_NAMES)
         #define SET_SORTSHORT(I) strcpy(sortshort[I], filename)
@@ -798,7 +806,7 @@ void CardReader::setroot() {
 
       // Never sort more than the max allowed
       // If you use folders to organize, 20 may be enough
-      if (fileCnt > SDSORT_LIMIT) fileCnt = SDSORT_LIMIT;
+      NOMORE(fileCnt, uint16_t(SDSORT_LIMIT));
 
       // Sort order is always needed. May be static or dynamic.
       #if ENABLED(SDSORT_DYNAMIC_RAM)
@@ -816,7 +824,7 @@ void CardReader::setroot() {
             sortnames = new char*[fileCnt];
           #endif
         #elif ENABLED(SDSORT_USES_STACK)
-          char sortnames[fileCnt][SORTED_LONGNAME_MAXLEN];
+          char sortnames[fileCnt][SORTED_LONGNAME_STORAGE];
         #endif
 
         // Folder sorting needs 1 bit per entry for flags.
@@ -999,17 +1007,15 @@ void CardReader::printingHasFinished() {
     #endif
 
     print_job_timer.stop();
-    if (print_job_timer.duration() > 60) enqueue_and_echo_commands_P(PSTR("M31"));
+    queue.enqueue_now_P(print_job_timer.duration() > 60 ? PSTR("M31") : PSTR("M117"));
 
     #if ENABLED(SDCARD_SORT_ALPHA)
       presort();
     #endif
 
-    #if EITHER(ULTRA_LCD, EXTENSIBLE_UI) && ENABLED(LCD_SET_PROGRESS_MANUALLY)
-      ui.progress_bar_percent = 0;
+    #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+      ui.set_progress_done();
     #endif
-
-    ui.reset_status();
 
     #if ENABLED(SD_REPRINT_LAST_SELECTED_FILE)
       ui.reselect_last_file();
@@ -1036,10 +1042,8 @@ void CardReader::printingHasFinished() {
 
 #if ENABLED(POWER_LOSS_RECOVERY)
 
-  constexpr char job_recovery_file_name[5] = "/PLR";
-
   bool CardReader::jobRecoverFileExists() {
-    const bool exists = recovery.file.open(&root, job_recovery_file_name, O_READ);
+    const bool exists = recovery.file.open(&root, recovery.filename, O_READ);
     if (exists) recovery.file.close();
     return exists;
   }
@@ -1047,10 +1051,10 @@ void CardReader::printingHasFinished() {
   void CardReader::openJobRecoveryFile(const bool read) {
     if (!isDetected()) return;
     if (recovery.file.isOpen()) return;
-    if (!recovery.file.open(&root, job_recovery_file_name, read ? O_READ : O_CREAT | O_WRITE | O_TRUNC | O_SYNC))
-      SERIAL_ECHOLNPAIR(MSG_SD_OPEN_FILE_FAIL, job_recovery_file_name, ".");
+    if (!recovery.file.open(&root, recovery.filename, read ? O_READ : O_CREAT | O_WRITE | O_TRUNC | O_SYNC))
+      SERIAL_ECHOLNPAIR(MSG_SD_OPEN_FILE_FAIL, recovery.filename, ".");
     else if (!read)
-      SERIAL_ECHOLNPAIR(MSG_SD_WRITE_TO_FILE, job_recovery_file_name);
+      SERIAL_ECHOLNPAIR(MSG_SD_WRITE_TO_FILE, recovery.filename);
   }
 
   // Removing the job recovery file currently requires closing
@@ -1059,7 +1063,7 @@ void CardReader::printingHasFinished() {
   void CardReader::removeJobRecoveryFile() {
     if (jobRecoverFileExists()) {
       recovery.init();
-      removeFile(job_recovery_file_name);
+      removeFile(recovery.filename);
       #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
         SERIAL_ECHOPGM("Power-loss file delete");
         serialprintPGM(jobRecoverFileExists() ? PSTR(" failed.\n") : PSTR("d.\n"));

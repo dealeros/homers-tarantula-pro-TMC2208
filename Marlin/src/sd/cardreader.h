@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ public:
   static card_flags_t flag;
   static char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH];
   static int8_t autostart_index;
+  static SdFile getroot() { return root; }
 
   #if ENABLED(BINARY_FILE_TRANSFER)
     #if NUM_SERIAL > 1
@@ -174,9 +175,11 @@ private:
     #endif
 
     #if BOTH(SDSORT_USES_RAM, SDSORT_CACHE_NAMES) && DISABLED(SDSORT_DYNAMIC_RAM)
-      #define SORTED_LONGNAME_MAXLEN ((SDSORT_CACHE_VFATS) * (FILENAME_LENGTH) + 1)
+      #define SORTED_LONGNAME_MAXLEN (SDSORT_CACHE_VFATS) * (FILENAME_LENGTH)
+      #define SORTED_LONGNAME_STORAGE (SORTED_LONGNAME_MAXLEN + 1)
     #else
       #define SORTED_LONGNAME_MAXLEN LONG_FILENAME_LENGTH
+      #define SORTED_LONGNAME_STORAGE SORTED_LONGNAME_MAXLEN
     #endif
 
     // Cache filenames to speed up SD menus.
@@ -188,10 +191,11 @@ private:
           static char **sortshort, **sortnames;
         #else
           static char sortshort[SDSORT_LIMIT][FILENAME_LENGTH];
-          static char sortnames[SDSORT_LIMIT][SORTED_LONGNAME_MAXLEN];
         #endif
-      #elif DISABLED(SDSORT_USES_STACK)
-        static char sortnames[SDSORT_LIMIT][SORTED_LONGNAME_MAXLEN];
+      #endif
+
+      #if (ENABLED(SDSORT_CACHE_NAMES) && DISABLED(SDSORT_DYNAMIC_RAM)) || NONE(SDSORT_CACHE_NAMES, SDSORT_USES_STACK)
+        static char sortnames[SDSORT_LIMIT][SORTED_LONGNAME_STORAGE];
       #endif
 
       // Folder sorting uses an isDir array when caching items.

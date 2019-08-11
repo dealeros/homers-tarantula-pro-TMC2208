@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ typedef struct {
 
   uint16_t feedrate;
 
-  #if HOTENDS > 1
-    uint8_t active_hotend;
+  #if EXTRUDERS > 1
+    uint8_t active_extruder;
   #endif
 
   int16_t target_temperature[HOTENDS];
@@ -87,8 +87,8 @@ typedef struct {
   bool relative_mode, relative_modes_e;
 
   // Command queue
-  uint8_t commands_in_queue, cmd_queue_index_r;
-  char command_queue[BUFSIZE][MAX_CMD_SIZE];
+  uint8_t queue_length, queue_index_r;
+  char queue_buffer[BUFSIZE][MAX_CMD_SIZE];
 
   // SD Filename and position
   char sd_filename[MAXPATHNAMELENGTH];
@@ -103,6 +103,8 @@ typedef struct {
 
 class PrintJobRecovery {
   public:
+    static const char filename[5];
+
     static SdFile file;
     static job_recovery_info_t info;
 

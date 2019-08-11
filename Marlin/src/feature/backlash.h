@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,32 +24,32 @@
 #include "../inc/MarlinConfigPre.h"
 #include "../module/planner.h"
 
+constexpr uint8_t all_on = 0xFF, all_off = 0x00;
+
 class Backlash {
 public:
+  #ifdef BACKLASH_DISTANCE_MM
+    #if ENABLED(BACKLASH_GCODE)
+      static float distance_mm[XYZ];
+    #else
+      static const float distance_mm[XYZ];
+      //static constexpr float distance_mm[XYZ] = BACKLASH_DISTANCE_MM; // compiler barks at this
+    #endif
+  #endif
   #if ENABLED(BACKLASH_GCODE)
     static uint8_t correction;
-    #ifdef BACKLASH_DISTANCE_MM
-      static float distance_mm[XYZ];
-    #endif
     #ifdef BACKLASH_SMOOTHING_MM
       static float smoothing_mm;
     #endif
-    static inline void set_correction(const float &v) { correction = MAX(0, MIN(1.0, v)) * all_on; }
+    static inline void set_correction(const float &v) { correction = _MAX(0, _MIN(1.0, v)) * all_on; }
     static inline float get_correction() { return float(ui8_to_percent(correction)) / 100.0f; }
-  #elif ENABLED(BACKLASH_COMPENSATION)
+  #else
     static constexpr uint8_t correction = (BACKLASH_CORRECTION) * 0xFF;
-    #ifdef BACKLASH_DISTANCE_MM
-      static constexpr float distance_mm[XYZ] = BACKLASH_DISTANCE_MM;
-    #endif
     #ifdef BACKLASH_SMOOTHING_MM
       static constexpr float smoothing_mm = BACKLASH_SMOOTHING_MM;
     #endif
     static inline void set_correction(float) { }
     static inline float get_correction() { return float(ui8_to_percent(correction)) / 100.0f; }
-  #else
-    static constexpr uint8_t correction = 0;
-    static inline void set_correction(float) { }
-    static inline float get_correction() { return 0; }
   #endif
 
   #if ENABLED(MEASURE_BACKLASH_WHEN_PROBING)
@@ -68,6 +68,9 @@ public:
       #endif
       0
     );
+    #if DISABLED(MEASURE_BACKLASH_WHEN_PROBING)
+      UNUSED(e);
+    #endif
   }
 
   static inline bool has_measurement(const uint8_t e) {
@@ -76,6 +79,9 @@ public:
         || (measured_count[e] > 0)
       #endif
     );
+    #if DISABLED(MEASURE_BACKLASH_WHEN_PROBING)
+      UNUSED(e);
+    #endif
   }
 
   static inline bool has_any_measurement() {
