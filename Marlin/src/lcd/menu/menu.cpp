@@ -88,10 +88,21 @@ void MarlinUI::save_previous_screen() {
     screen_history[screen_history_depth++] = { currentScreen, encoderPosition, encoderTopLine, screen_items };
 }
 
-void MarlinUI::goto_previous_screen() {
+void MarlinUI::goto_previous_screen(
+  #if ENABLED(TURBO_BACK_MENU_ITEM)
+    const bool is_back/*=false*/
+  #endif
+) {
+  #if DISABLED(TURBO_BACK_MENU_ITEM)
+    constexpr bool is_back = false;
+  #endif
   if (screen_history_depth > 0) {
     menuPosition &sh = screen_history[--screen_history_depth];
-    goto_screen(sh.menu_function, sh.encoder_position, sh.top_line, sh.items);
+    goto_screen(sh.menu_function,
+      is_back ? 0 : sh.encoder_position,
+      is_back ? 0 : sh.top_line,
+      sh.items
+    );
   }
   else
     return_to_status();
@@ -132,6 +143,9 @@ void MenuItem_gcode::action(PGM_P const pgcode) { queue.inject_P(pgcode); }
  *       MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
  */
 void MenuItemBase::edit(strfunc_t strfunc, loadfunc_t loadfunc) {
+  #if ENABLED(TOUCH_BUTTONS)
+    ui.repeat_delay = 50;
+  #endif
   if (int16_t(ui.encoderPosition) < 0) ui.encoderPosition = 0;
   if (int16_t(ui.encoderPosition) > maxEditValue) ui.encoderPosition = maxEditValue;
   if (ui.should_draw())
@@ -200,6 +214,10 @@ bool printer_busy() {
  */
 void MarlinUI::goto_screen(screenFunc_t screen, const uint16_t encoder/*=0*/, const uint8_t top/*=0*/, const uint8_t items/*=0*/) {
   if (currentScreen != screen) {
+
+    #if ENABLED(TOUCH_BUTTONS)
+      repeat_delay = 250;
+    #endif
 
     #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       // Shadow for editing the fade height
@@ -442,12 +460,14 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
     #if HAS_BUZZER
       ui.completion_feedback(saved);
     #endif
+    UNUSED(saved);
   }
   void lcd_load_settings() {
     const bool loaded = settings.load();
     #if HAS_BUZZER
       ui.completion_feedback(loaded);
     #endif
+    UNUSED(loaded);
   }
 #endif
 
