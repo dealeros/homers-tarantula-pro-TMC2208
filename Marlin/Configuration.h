@@ -204,6 +204,27 @@
 //#define SOFT_PWM
 
 /**
+ * Enable this to use the classic Jerk system. Default is to use the new Junction Deviation system
+ */
+#define CLASSIC_JERK
+
+/**
+ * If not using "Classic Jerk", set the Junction Deviation distance here.
+ * (Can also be set in gcode using M205 J0.013; Set Junction Deviation)
+ */
+#define JD_MM 0.013
+
+/**
+ * S-Curve Acceleration
+ *
+ * This option eliminates vibration during printing by fitting a Bézier
+ * curve to move acceleration, producing much smoother direction changes.
+ *
+ * See https://github.com/synthetos/TinyG/wiki/Jerk-Controlled-Motion-Explained
+ */
+//#define S_CURVE_ACCELERATION
+
+/**
  * Enable this to provide a realtime control over the head position via the LCD menu system that works while printing.
  * Using it, one can tune the z-position while printing the first layer.
  *
