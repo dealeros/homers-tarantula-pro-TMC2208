@@ -49,6 +49,7 @@
 //#define MOTHERBOARD BOARD_MKS_BASE_15       // MKS v1.5 with Allegro A4982 stepper drivers
 //#define MOTHERBOARD BOARD_MKS_BASE_HEROIC   // MKS BASE 1.0 with Heroic HR4982 stepper drivers
 //#define MOTHERBOARD BOARD_MKS_GEN_L         // Newer controller board with replacable stepper drivers
+//#define MOTHERBOARD BOARD_MKS_GEN_L_V2
 
 /**
  * Offset from endpoints to get nozzle to 0,0 (front/left of bed)
