@@ -81,7 +81,6 @@
  * If a Z-Probe type is selected, a Bed Leveling type other than MANUAL must be selected.
  */
 //#define BLTOUCH       // ANTClabs BLTouch sensor (might also work with clones)
-//#define BLTOUCH_V3    // ANTCLabs BLTouch sensor version 3
 //#define SN04          // Green sensor
 //#define INDUCTIVE_NO  // Normally open inductive sensor
 //#define INDUCTIVE_NC  // Normally closed inductive sensor
