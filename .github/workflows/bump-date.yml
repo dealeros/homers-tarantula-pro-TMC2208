@@ -22,4 +22,4 @@ jobs:
         ref: bugfix-2.0.x
 
     - name: Bump Distribution Date
-      run: source ./buildroot/bin/bump_date
+#      run: source ./buildroot/bin/bump_date
