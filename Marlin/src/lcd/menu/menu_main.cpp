@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -81,7 +81,7 @@ extern const char M21_STR[];
 
 void menu_main() {
   START_MENU();
-  BACK_ITEM(MSG_WATCH);
+  BACK_ITEM(MSG_INFO_SCREEN);
 
   const bool busy = printingIsActive()
     #if ENABLED(SDSUPPORT)

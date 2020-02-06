@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -31,4 +31,8 @@
 
 #if TMC_HAS_SW_SERIAL
   #error "TMC220x Software Serial is not supported on this platform."
+#endif
+
+#if BOTH(WIFISUPPORT, ESP3D_WIFISUPPORT)
+  #error "Only enable one WiFi option, either WIFISUPPORT or ESP3D_WIFISUPPORT."
 #endif

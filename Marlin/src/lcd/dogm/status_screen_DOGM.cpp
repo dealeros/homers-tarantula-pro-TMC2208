@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -438,7 +438,7 @@ void MarlinUI::draw_status_screen() {
       if (p != lastProgress) {
         lastProgress = p;
 
-        progress_bar_solid_width = u8g_uint_t((PROGRESS_BAR_WIDTH - 2) * progress / (PROGRESS_SCALE) * 0.01f);
+        progress_bar_solid_width = u8g_uint_t((PROGRESS_BAR_WIDTH - 2) * (progress / (PROGRESS_SCALE)) * 0.01f);
 
         #if ENABLED(DOGM_SD_PERCENT)
           if (progress == 0) {
