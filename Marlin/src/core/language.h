@@ -39,7 +39,7 @@
 //
 //   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRA_LCD" / "SDSUPPORT" #define IN "Configuration.h"
 //   ==> ALSO TRY ALL AVAILABLE LANGUAGE OPTIONS
-// See also http://marlinfw.org/docs/development/lcd_language.html
+// See also https://marlinfw.org/docs/development/lcd_language.html
 
 // Languages
 // an         Aragonese
@@ -57,6 +57,7 @@
 // fr         French
 // gl         Galician
 // hr         Croatian
+// hu         Hungarian
 // it         Italian
 // jp_kana    Japanese
 // ko_KR      Korean (South Korea)
@@ -80,11 +81,9 @@
 #ifdef CUSTOM_MACHINE_NAME
   #undef  MACHINE_NAME
   #define MACHINE_NAME CUSTOM_MACHINE_NAME
-#else
-  #ifdef DEFAULT_MACHINE_NAME
-    #undef  MACHINE_NAME
-    #define MACHINE_NAME DEFAULT_MACHINE_NAME
-  #endif
+#elif defined(DEFAULT_MACHINE_NAME)
+  #undef  MACHINE_NAME
+  #define MACHINE_NAME DEFAULT_MACHINE_NAME
 #endif
 
 #ifndef MACHINE_UUID

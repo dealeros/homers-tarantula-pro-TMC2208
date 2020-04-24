@@ -26,7 +26,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_LCD_MENU && ENABLED(AUTO_BED_LEVELING_UBL)
+#if BOTH(HAS_LCD_MENU, AUTO_BED_LEVELING_UBL)
 
 #include "menu.h"
 #include "../../gcode/gcode.h"
@@ -51,7 +51,7 @@ float mesh_edit_value, mesh_edit_accumulator; // We round mesh_edit_value to 2.5
                                               // separate value that doesn't lose precision.
 static int16_t ubl_encoderPosition = 0;
 
-static void _lcd_mesh_fine_tune(PGM_P msg) {
+static void _lcd_mesh_fine_tune(PGM_P const msg) {
   ui.defer_status_screen();
   if (ubl.encoder_diff) {
     ubl_encoderPosition = (ubl.encoder_diff > 0) ? 1 : -1;
@@ -68,18 +68,17 @@ static void _lcd_mesh_fine_tune(PGM_P msg) {
 
   if (ui.should_draw()) {
     MenuEditItemBase::draw_edit_screen(msg, ftostr43sign(mesh_edit_value));
-    #if ENABLED(MESH_EDIT_GFX_OVERLAY)
-      _lcd_zoffset_overlay_gfx(mesh_edit_value);
-    #endif
+    TERN_(MESH_EDIT_GFX_OVERLAY, _lcd_zoffset_overlay_gfx(mesh_edit_value));
   }
 }
 
-void _lcd_mesh_edit_NOP() {
+void lcd_limbo() {
+  ui.currentScreen = []{};
   ui.defer_status_screen();
 }
 
 float lcd_mesh_edit() {
-  ui.goto_screen(_lcd_mesh_edit_NOP);
+  lcd_limbo();
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
   _lcd_mesh_fine_tune(GET_TEXT(MSG_MESH_EDITOR));
   return mesh_edit_value;
@@ -87,7 +86,7 @@ float lcd_mesh_edit() {
 
 void lcd_mesh_edit_setup(const float &initial) {
   mesh_edit_value = mesh_edit_accumulator = initial;
-  ui.goto_screen(_lcd_mesh_edit_NOP);
+  lcd_limbo();
 }
 
 void _lcd_z_offset_edit() {
@@ -187,8 +186,8 @@ void _lcd_ubl_edit_mesh() {
  */
 void _lcd_ubl_validate_custom_mesh() {
   char ubl_lcd_gcode[24];
-  const int temp = TERN(HAS_HEATED_BED, custom_bed_temp, 0);
-  sprintf_P(ubl_lcd_gcode, PSTR("G28\nG26 C B%i H%i P"), temp, custom_hotend_temp);
+  const int16_t temp = TERN(HAS_HEATED_BED, custom_bed_temp, 0);
+  sprintf_P(ubl_lcd_gcode, PSTR("G28\nG26 C B%" PRIi16 " H%" PRIi16 " P"), temp, custom_hotend_temp);
   queue.inject(ubl_lcd_gcode);
 }
 
@@ -437,10 +436,9 @@ void ubl_map_move_to_xy() {
 void set_current_from_steppers_for_axis(const AxisEnum axis);
 void sync_plan_position();
 
-void _lcd_do_nothing() {}
 void _lcd_hard_stop() {
   const screenFunc_t old_screen = ui.currentScreen;
-  ui.currentScreen = _lcd_do_nothing;
+  lcd_limbo();
   planner.quick_stop();
   ui.currentScreen = old_screen;
   set_current_from_steppers_for_axis(ALL_AXES);
