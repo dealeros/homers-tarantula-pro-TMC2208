@@ -424,6 +424,13 @@
 // For Cyclops or any "multi-extruder" that shares a single nozzle.
 //#define SINGLENOZZLE
 
+// Save and restore temperature and fan speed on tool-change.
+// Set standby for the unselected tool with M104/106/109 T...
+#if ENABLED(SINGLENOZZLE)
+  //#define SINGLENOZZLE_STANDBY_TEMP
+  //#define SINGLENOZZLE_STANDBY_FAN
+#endif
+
 /**
  * Průša MK2 Single Nozzle Multi-Material Multiplexer, and variants.
  *
@@ -1767,12 +1774,11 @@
     #define Z_SAFE_X_POINT PROBE_X_LEFT
     #define Z_SAFE_Y_POINT PROBE_Y_BACK
   #else
-    #define Z_SAFE_X_POINT ((X_BED_SIZE) / 2)
-    #define Z_SAFE_Y_POINT ((Y_BED_SIZE) / 2)
+    #define Z_SAFE_X_POINT X_CENTER
+    #define Z_SAFE_Y_POINT Y_CENTER
   #endif
 #endif
 
-#if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT Z_SAFE_X_POINT    // X point for Z homing when homing all axes (G28).
   #define Z_SAFE_HOMING_Y_POINT Z_SAFE_Y_POINT    // Y point for Z homing when homing all axes (G28).
 #endif
@@ -1918,8 +1924,11 @@
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }
   #define NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
+  //#define NOZZLE_PARK_X_ONLY          // X move only is required to park
+  //#define NOZZLE_PARK_Y_ONLY          // Y move only is required to park
+  #define NOZZLE_PARK_Z_RAISE_MIN   2   // (mm) Always raise Z by at least this distance
   #define NOZZLE_PARK_XY_FEEDRATE 100   // (mm/s) X and Y axes feedrate (also used for delta Z axis)
-  #define NOZZLE_PARK_Z_FEEDRATE 5      // (mm/s) Z axis feedrate (not used for delta printers)
+  #define NOZZLE_PARK_Z_FEEDRATE    5   // (mm/s) Z axis feedrate (not used for delta printers)
 #endif
 
 /**
