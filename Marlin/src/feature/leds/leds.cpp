@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -129,12 +129,9 @@ void LEDLights::set_color(const LEDColor &incol
 
   #endif
 
-  #if ENABLED(PCA9632)
-    // Update I2C LED driver
-    pca9632_set_led_color(incol);
-  #endif
-
-  TERN_(PCA9533, PCA9533_setColor(incol.r, incol.g, incol.b));
+  // Update I2C LED driver
+  TERN_(PCA9632, PCA9632_set_led_color(incol));
+  TERN_(PCA9533, PCA9533_set_rgb(incol.r, incol.g, incol.b));
 
   #if EITHER(LED_CONTROL_MENU, PRINTER_EVENT_LEDS)
     // Don't update the color when OFF

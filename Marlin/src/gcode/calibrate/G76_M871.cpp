@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -45,7 +45,7 @@
  *  - When calibrating bed, probe temperature is held constant.
  *    Compensation values are deltas to first probe measurement at bed temp. = 60°C.
  *  - The hotend will not be heated at any time.
- *  - On my Prusa MK3S clone I put a piece of paper between the probe and the hotend
+ *  - On my Průša MK3S clone I put a piece of paper between the probe and the hotend
  *    so the hotend fan would not cool my probe constantly. Alternativly you could just
  *    make sure the fan is not running while running the calibration process.
  *
