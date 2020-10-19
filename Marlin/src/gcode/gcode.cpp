@@ -327,7 +327,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 33: G33(); break;                                    // G33: Delta Auto-Calibration
       #endif
 
-      #if ENABLED(Z_STEPPER_AUTO_ALIGN)
+      #if EITHER(Z_STEPPER_AUTO_ALIGN, MECHANICAL_GANTRY_CALIBRATION)
         case 34: G34(); break;                                    // G34: Z Stepper automatic alignment using probe
       #endif
 
@@ -754,8 +754,8 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
           case 511: M511(); break;                                // M511: Unlock Printer
         #endif
         #if ENABLED(PASSWORD_CHANGE_GCODE)
-          case 512: M512(); break;
-        #endif                                                    // M512: Set/Change/Remove Password
+          case 512: M512(); break;                                // M512: Set/Change/Remove Password
+        #endif
       #endif
 
       #if ENABLED(SDSUPPORT)

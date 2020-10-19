@@ -488,7 +488,7 @@
     #define LCD_PINS_ENABLE                   51  // SID (MOSI)
     #define LCD_PINS_D4                       52  // SCK (CLK) clock
 
-  #elif BOTH(NEWPANEL, PANEL_ONE)
+  #elif BOTH(IS_NEWPANEL, PANEL_ONE)
 
     #define LCD_PINS_RS                       40
     #define LCD_PINS_ENABLE                   42
@@ -509,7 +509,7 @@
       #define LCD_PINS_ENABLE                 29
       #define LCD_PINS_D4                     25
 
-      #if DISABLED(NEWPANEL)
+      #if !IS_NEWPANEL
         #define BEEPER_PIN                    37
       #endif
 
@@ -528,10 +528,10 @@
         #define LCD_PINS_DC                   25  // Set as output on init
         #define LCD_PINS_RS                   27  // Pull low for 1s to init
         // DOGM SPI LCD Support
+        #define DOGLCD_A0            LCD_PINS_DC
         #define DOGLCD_CS                     16
         #define DOGLCD_MOSI                   17
         #define DOGLCD_SCK                    23
-        #define DOGLCD_A0            LCD_PINS_DC
       #else
         #define LCD_PINS_RS                   16
         #define LCD_PINS_ENABLE               17
@@ -542,13 +542,13 @@
 
       #define LCD_PINS_D7                     29
 
-      #if DISABLED(NEWPANEL)
+      #if !IS_NEWPANEL
         #define BEEPER_PIN                    33
       #endif
 
     #endif
 
-    #if DISABLED(NEWPANEL)
+    #if !IS_NEWPANEL
       // Buttons attached to a shift register
       // Not wired yet
       //#define SHIFT_CLK                     38
@@ -562,9 +562,9 @@
   //
   // LCD Display input pins
   //
-  #if ENABLED(NEWPANEL)
+  #if IS_NEWPANEL
 
-    #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
+    #if IS_RRD_SC
 
       #define BEEPER_PIN                      37
 
@@ -732,6 +732,7 @@
     #elif ENABLED(AZSMZ_12864)
 
       // Pins only defined for RAMPS_SMART currently
+      #error "No pins defined for RAMPS with AZSMZ_12864."
 
     #elif IS_TFTGLCD_PANEL
 
@@ -759,11 +760,11 @@
       #endif
 
     #endif
-  #endif // NEWPANEL
+  #endif // IS_NEWPANEL
 
 #endif // HAS_WIRED_LCD
 
-#if ENABLED(REPRAPWORLD_KEYPAD) && DISABLED(ADC_KEYPAD)
+#if IS_RRW_KEYPAD && !HAS_ADC_BUTTONS
   #define SHIFT_OUT                           40
   #define SHIFT_CLK                           44
   #define SHIFT_LD                            42
