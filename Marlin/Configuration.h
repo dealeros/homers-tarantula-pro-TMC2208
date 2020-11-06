@@ -28,7 +28,7 @@
 
 ***********************************************************************/
 
-#define PRINTER_NAME "TEVO Tarantula (EasyConfig)"  // Change this to whatever you wish, or leave it as it is.
+#define PRINTER_NAME "Tarantula Pro"  // Change this to whatever you wish, or leave it as it is.
                                                     // NOTE: Whatever you put here will have " Ready..." appended to it.
 
 /**
@@ -37,18 +37,18 @@
 //#define LARGE_BED
 #define SDSUPPORT
 //#define CHANGE_Y_DIRECTION        // If your bed homes in the wrong direction (it should move front to back) enable this.
-//#define CHANGE_X_DIRECTION        // If your X carriage homes in the wrong direction (it should move right to left) enable this.
-//#define CHANGE_Z_DIRECTION        // If your Z homes in the wrong direction (it should move top to bottom) enable this.
+#define CHANGE_X_DIRECTION        // If your X carriage homes in the wrong direction (it should move right to left) enable this.
+#define CHANGE_Z_DIRECTION        // If your Z homes in the wrong direction (it should move top to bottom) enable this.
 //#define HOTEND_E3DV6              // Genuine E3D v6 hotend.
 //#define FULL_GRAPHIC_SMART        // Enable this if you have a RepRap Discount Full Graphic Smart Controller (The
                                     // stock controller is a RepRap Discount Smart Controller)
 #define NUM_Z_STEPPER_DRIVERS 1    // Change this to 2 if you have dual Z stepper motors with the second stepper motor
                                     // connected to the next available E plug (usually E1)
 
-#define MOTHERBOARD BOARD_MKS_GEN_13        // Original controller board with built in stepper drivers. Works with MKS BASE 1.3, 1.4
+//#define MOTHERBOARD BOARD_MKS_GEN_13        // Original controller board with built in stepper drivers. Works with MKS BASE 1.3, 1.4
 //#define MOTHERBOARD BOARD_MKS_BASE_15       // MKS v1.5 with Allegro A4982 stepper drivers
 //#define MOTHERBOARD BOARD_MKS_BASE_HEROIC   // MKS BASE 1.0 with Heroic HR4982 stepper drivers
-//#define MOTHERBOARD BOARD_MKS_GEN_L         // Newer controller board with replacable stepper drivers
+#define MOTHERBOARD BOARD_MKS_SGEN_L         // Newer controller board with replacable stepper drivers
 //#define MOTHERBOARD BOARD_MKS_GEN_L_V2
 
 /**
@@ -67,14 +67,14 @@
  * Primary Extruder steps per mm (plugged in to E0 port on controller)
  * (How to calibrate: https://toms3d.org/2014/04/06/3d-printing-guides-calibrating-your-extruder/)
  */
-#define E0_STEPS      100 // Stock extruder. If you have a Tevo Titan, try 400 then calibrate.
-//#define CHANGE_E0_DIRECTION   // If your extruder is going backwards, enable this.
+#define E0_STEPS      400.0 // Stock extruder. If you have a Tevo Titan, try 400 then calibrate.
+#define CHANGE_E0_DIRECTION   // If your extruder is going backwards, enable this.
 
 /**
  * Z Axis steps per mm (Default for stock lead screw is 1600)
  * If you install a lead screw with a different pitch and/or lead, change this
  */
-#define Z_STEPS      1600 // Stock lead screw
+#define Z_STEPS      399.2901 // Stock lead screw
 
 /**
  * Z-Probe type (must be none or one of them)
@@ -154,9 +154,9 @@
 /**
  * TEVO Tarantula Custom PID Settings - Stock Hotend
  */
-#define  hot_Kp 9.84
-#define  hot_Ki 0.50
-#define  hot_Kd 48.17
+#define  hot_Kp 26.27
+#define  hot_Ki 2.49
+#define  hot_Kd 69.41
 // FIND YOUR OWN: "M303 E0 C8 S200" to run autotune on the hotend at 200 degreesC for 8 cycles.
 // More info here: http://reprap.org/wiki/PID_Tuning
 
@@ -188,8 +188,8 @@
  *       CUSTOM_USER_MENUS for PETG to appear, along with PLA and ABS, under Custom Commands.
  *       PLA and ABS will appear under both Custom Command and Prepare.
  */
-#define Hot_PLA     215
-#define Bed_PLA      75
+#define Hot_PLA     210
+#define Bed_PLA      60
 
 #define Hot_ABS 		240
 #define Bed_ABS 		100
@@ -229,11 +229,11 @@
  *
  * See https://marlinfw.org/docs/features/lin_advance.html for full instructions.
  */
-#define LIN_ADVANCE
-#define LIN_ADVANCE_K 0       // Unit: mm compression per 1mm/s extruder speed
+//#define LIN_ADVANCE
+//#define LIN_ADVANCE_K 0       // Unit: mm compression per 1mm/s extruder speed
 
 /**
- * NOTE NOTE NOTE NOTE!!!
+ * NOTE NOTE NOTE NOTE
  *
  * LIN_ADVANCE and S_CURVE_ACCELERATION do not play well together.
  *
@@ -290,7 +290,7 @@
 /*
  ************************ END OF EASY CONFIG ****************************
  *======================================================================*
- * DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING!!!!!! *
+ * DO NOT EDIT BELOW THIS LINE UNLESS YOU KNOW WHAT YOU ARE DOING! *
  *======================================================================*
  */
 
@@ -399,7 +399,7 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT 0
+#define SERIAL_PORT -1
 
 /**
  * Select a secondary serial port on the board to use for communication with the host.
@@ -1005,8 +1005,8 @@
  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'L6470', 'L6474', 'POWERSTEP01', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
  */
-#define X_DRIVER_TYPE  A4988
-#define Y_DRIVER_TYPE  A4988
+#define X_DRIVER_TYPE  TMC2208_STANDALONE
+#define Y_DRIVER_TYPE  TMC2208_STANDALONE
 #define Z_DRIVER_TYPE  A4988
 //#define X2_DRIVER_TYPE A4988
 //#define Y2_DRIVER_TYPE A4988
@@ -1073,7 +1073,7 @@
 #if ENABLED(DUAL_EXTRUDER)
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, Z_STEPS, E0_STEPS, E1_STEPS }
 #else
-  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, Z_STEPS, E0_STEPS }
+  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80.058, 80.058, Z_STEPS, E0_STEPS }
 #endif
 
 /**
@@ -1117,9 +1117,9 @@
  *   M204 R    Retract Acceleration
  *   M204 T    Travel Acceleration
  */
-#define DEFAULT_ACCELERATION          1000    // X, Y, Z and E acceleration for printing moves
+#define DEFAULT_ACCELERATION          800    // X, Y, Z and E acceleration for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  2000    // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION   3000    // X, Y, Z acceleration for travel (non printing) moves
+#define DEFAULT_TRAVEL_ACCELERATION   1500    // X, Y, Z acceleration for travel (non printing) moves
 
 /**
  * Default Jerk limits (mm/s)
@@ -1131,9 +1131,9 @@
  */
 #define CLASSIC_JERK
 #if ENABLED(CLASSIC_JERK)
-  #define DEFAULT_XJERK  4.0
-  #define DEFAULT_YJERK  7.0
-  #define DEFAULT_ZJERK  0.2
+  #define DEFAULT_XJERK  10.0
+  #define DEFAULT_YJERK  10.0
+  #define DEFAULT_ZJERK  0.3
 
   //#define TRAVEL_EXTRA_XYJERK 0.0     // Additional jerk allowance for all travel moves
 
@@ -1143,7 +1143,7 @@
   #endif
 #endif
 
-#define DEFAULT_EJERK    2.5  // May be used by Linear Advance
+#define DEFAULT_EJERK    5.0  // May be used by Linear Advance
 
 /**
  * Junction Deviation Factor
@@ -1493,11 +1493,11 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 200
+#define X_BED_SIZE 235
 #if ENABLED(LARGE_BED)
   #define Y_BED_SIZE 280
 #else
-  #define Y_BED_SIZE 200
+  #define Y_BED_SIZE 235
 #endif
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
@@ -1769,7 +1769,7 @@
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-//#define LEVEL_BED_CORNERS
+#define LEVEL_BED_CORNERS
 
 #if ENABLED(LEVEL_BED_CORNERS)
   #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
@@ -2222,7 +2222,7 @@
 //  If CLOCKWISE normally moves DOWN this makes it go UP.
 //  If CLOCKWISE normally moves UP this makes it go DOWN.
 //
-//#define REVERSE_MENU_DIRECTION
+#define REVERSE_MENU_DIRECTION
 
 //
 // This option reverses the encoder direction for Select Screen.
@@ -2230,7 +2230,7 @@
 //  If CLOCKWISE normally moves LEFT this makes it go RIGHT.
 //  If CLOCKWISE normally moves RIGHT this makes it go LEFT.
 //
-//#define REVERSE_SELECT_DIRECTION
+#define REVERSE_SELECT_DIRECTION
 
 //
 // Individual Axis Homing
@@ -2269,7 +2269,7 @@
 // Note: Usually sold with a white PCB.
 //
 #if DISABLED(FULL_GRAPHIC_SMART)
-  #define REPRAP_DISCOUNT_SMART_CONTROLLER
+  //#define REPRAP_DISCOUNT_SMART_CONTROLLER
 #endif
 
 //
@@ -2421,7 +2421,7 @@
 // https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
 #if ENABLED(FULL_GRAPHIC_SMART)
-  #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+  //#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 #endif
 
 //
@@ -2483,7 +2483,7 @@
 // MKS MINI12864 with graphic controller and SD support
 // https://reprap.org/wiki/MKS_MINI_12864
 //
-//#define MKS_MINI_12864
+#define MKS_MINI_12864
 
 //
 // MKS LCD12864A/B with graphic controller and SD support. Follows MKS_MINI_12864 pinout.

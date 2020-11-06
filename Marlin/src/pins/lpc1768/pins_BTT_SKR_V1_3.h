@@ -226,7 +226,7 @@
     * 3. Rewire the CLK Signal (LCD Pin9) to LCD Pin7. (LCD Pin9 remains open because this pin is open drain.)
     * 4. A wire is needed to connect the Reset switch at J3 (LCD Pin7) to EXP2 (Pin3) on the board.
     *
-    * !!! If you are unsure, ask for help! Your motherboard may be damaged in some circumstances !!!
+    * ! If you are unsure, ask for help! Your motherboard may be damaged in some circumstances !
     *
     * The ANET_FULL_GRAPHICS_LCD connector plug:
     *

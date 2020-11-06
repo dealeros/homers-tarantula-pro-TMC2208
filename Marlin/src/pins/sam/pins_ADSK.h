@@ -32,7 +32,7 @@
 #endif
 
 /* CNC shield modifications:
-FROM THE BOTTOM CUT THE 5V PIN THAT GOES TO ARDUINO!!!
+FROM THE BOTTOM CUT THE 5V PIN THAT GOES TO ARDUINO!
 On the top put jumper between 5V and 3V3 pins,
     jumper between D12 and A.STEP, jumper between D13 and A.DIR
 */

@@ -1389,7 +1389,7 @@ void Stepper::isr() {
       if (is_babystep) nextBabystepISR = babystepping_isr();
     #endif
 
-    // ^== Time critical. NOTHING besides pulse generation should be above here!!!
+    // ^== Time critical. NOTHING besides pulse generation should be above here!
 
     if (!nextMainISR) nextMainISR = block_phase_isr();  // Manage acc/deceleration, get next block
 

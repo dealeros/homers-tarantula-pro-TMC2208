@@ -34,7 +34,7 @@
  * able to support fast on-the-fly RLE compression/decompression.
  *
  * In testing with the current LVGL_UI it compacts 2.9MB of icons
- * (which have lots of runs) down to 370kB!!! As a result the UI
+ * (which have lots of runs) down to 370kB! As a result the UI
  * refresh rate becomes faster and now all LVGL UI can fit into a
  * tiny 2MB SPI Flash, such as the Chitu Board.
  *

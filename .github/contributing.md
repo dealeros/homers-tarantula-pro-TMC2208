@@ -8,7 +8,7 @@ The following is a set of guidelines for contributing to Marlin, hosted by the [
 
 [Code of Conduct](#code-of-conduct)
 
-[I don't want to read this whole thing, I just have a question!!!](#i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
+[I don't want to read this whole thing, I just have a question!](#i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
 
 [How Can I Contribute?](#how-can-i-contribute)
   * [Reporting Bugs](#reporting-bugs)
@@ -28,7 +28,7 @@ The following is a set of guidelines for contributing to Marlin, hosted by the [
 
 This project and everyone participating in it is governed by the [Marlin Code of Conduct](code_of_conduct.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [marlinfirmware@github.com](mailto:marlinfirmware@github.com).
 
-## I don't want to read this whole thing I just have a question!!!
+## I don't want to read this whole thing I just have a question!
 
 > **Note:** Please don't file an issue to ask a question. You'll get faster results by using the resources below.
 

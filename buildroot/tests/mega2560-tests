@@ -203,7 +203,7 @@ exec_test $1 $2 "Mightyboard Rev. E | CoreXY, Gradient Mix | Endstop Int. | Home
 
 ######## I2C LCD/PANELS ##############
 #
-# !!!ATTENTION!!!
+# !ATTENTION!
 # Most I2C configurations are failing at the moment because they require
 # a different Liquid Crystal library "LiquidTWI2".
 #

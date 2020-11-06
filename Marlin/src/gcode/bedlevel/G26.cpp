@@ -679,7 +679,7 @@ void GcodeSuite::G26() {
    *
    *  Filament is primed!
    *
-   *  It's  "Show Time" !!!
+   *  It's  "Show Time"
    */
 
   circle_flags.reset();
